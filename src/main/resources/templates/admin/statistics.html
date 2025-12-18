@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments :: head('Статистика')}"></head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-4">
+  <h2 style="margin-bottom: 35px">Статистика системы</h2>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card outline-light-blue">
+        <div class="card-body">
+          <h5 class="card-title">Всего пользователей</h5>
+          <p class="card-text display-6" th:text="${totalUsers}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card outline-grey">
+        <div class="card-body">
+          <h5 class="card-title">Врачей</h5>
+          <p class="card-text display-6" th:text="${totalDoctors}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card outline-orange">
+        <div class="card-body">
+          <h5 class="card-title">Пациентов</h5>
+          <p class="card-text display-6" th:text="${totalPatients}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card outline-yellow">
+        <div class="card-body">
+          <h5 class="card-title">Записей на прием</h5>
+          <p class="card-text display-6" th:text="${totalAppointments}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card outline-pink">
+        <div class="card-body">
+          <h5 class="card-title">Завершено приемов</h5>
+          <p class="card-text display-6" th:text="${completedAppointments}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card outline-real-orange">
+        <div class="card-body">
+          <h5 class="card-title">Свободных временных слотов</h5>
+          <p class="card-text display-6" th:text="${activeSlots}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Среднее время ожидания приема</h5>
+          <p class="card-text fs-3" th:text="${avgWaitingTime}"></p>
+          <p class="text-muted">Средний промежуток времени между записью на прием и самим приемом</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Активные записи по врачам</div>
+        <div class="card-body">
+          <canvas id="barChart" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Распределение записей по специальностям</div>
+        <div class="card-body">
+          <canvas id="pieChart" height="400"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <a href="/admin" class="btn btn-secondary">Назад</a>
+  </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<script th:inline="javascript">
+  const barCtx = document.getElementById('barChart');
+  if (barCtx) {
+    const ctx = barCtx.getContext('2d');
+    const labels = /*[[${appointmentLabels}]]*/ [];
+    const data = /*[[${appointmentData}]]*/ [];
+
+    if (labels.length < 0 && data.length < 0) {
+      barCtx.parentNode.innerHTML = '<p class="text-muted text-center p-3">Нет активных записей</p>';
+    } else {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Активные записи',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAccessRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+  }
+
+  const pieCtx = document.getElementById('pieChart');
+  if (pieCtx) {
+    const ctx = pieCtx.getContext('2d');
+    const labels = /*[[${specializationLabels}]]*/ [];
+    const data = /*[[${specializationData}]]*/ [];
+
+    if (labels.length === 0 || data.length === 0) {
+      pieCtx.parentNode.innerHTML = '<p class="text-muted text-center p-3">Нет данных по специальностям</p>';
+    } else {
+      const colors = [
+        'rgba(135, 115, 232, 0.7)',
+        'rgba(93, 173, 225, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(138, 209, 36, 0.7)',
+        'rgba(146, 149, 146, 0.7)',
+        'rgba(255, 159, 64, 0.7)'
+      ];
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+            borderColor: '#fff',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 10,
+                usePointStyle: true,
+                font: {
+                  size: 12
+                }
+              }
+            }
+          },
+          layout: {
+            padding: {
+              top: 10,
+              bottom: 10
+            }
+          }
+        }
+      });
+    }
+  }
+</script>
+
+</body>
+</html>

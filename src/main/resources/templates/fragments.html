@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8"/>
+    <title th:text="${title}">Поликлиника</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark">
+    <div class="container d-flex align-items-start">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/dashboard}">
+            <img th:src="@{/images/clinic-xxl.png}"
+                 alt="Clinic"
+                 class="navbar-icon"
+                 style="width: 27px; height: 27px; margin-right: 10px; margin-bottom: 4px">
+            Поликлиника
+        </a>
+
+        <div class="navbar-contact d-none d-lg-block">
+            <div>Адрес: г. Москва, ул. Большая Пироговская, дом 7</div>
+            <div>Телефон: 8 (495) XXX-XX-XX</div>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" class="ms-auto d-flex align-items-center">
+      <span class="text-white me-3">
+        Здравствуйте, <b th:text="${#authentication.name}"></b>!
+      </span>
+            <a class="btn btn-outline-light" href="/logout">Выйти</a>
+        </div>
+    </div>
+</nav>
+
+<div th:fragment="alert" class="container mt-3">
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Ошибка:</strong> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${param.registered}" class="alert alert-success alert-dismissible fade show" role="alert">
+        Регистрация прошла успешно! Войдите, пожалуйста.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
+        Вы успешно вышли из системы.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+<footer th:fragment="footer">
+    <div class="container text-center">
+        <a href="/about">Об авторе</a>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

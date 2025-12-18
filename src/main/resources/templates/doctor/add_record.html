@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Создать заключение')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+    <h2>Создать заключение</h2>
+    <p>Пациент: <span th:text="${patient.user?.fullName}"></span></p>
+
+    <form th:object="${record}" th:action="@{/doctor/record/add}" method="post" class="mt-3">
+        <input type="hidden" th:field="*{patientId}" />
+        <input type="hidden" th:field="*{doctorId}" />
+
+        <div class="mb-3">
+            <label class="form-label">Жалобы пациента *</label>
+            <textarea class="form-control" th:field="*{complaints}" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Общий осмотр *</label>
+            <textarea class="form-control" th:field="*{examination}" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Основной диагноз *</label>
+            <textarea class="form-control" th:field="*{diagnosis}" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Рекомендации *</label>
+            <textarea class="form-control" th:field="*{recommendations}" rows="3" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="/doctor/appointments" class="btn btn-secondary ms-2">Отмена</a>
+    </form>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

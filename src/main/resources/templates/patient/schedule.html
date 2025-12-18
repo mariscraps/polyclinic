@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Расписание врачей')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Расписание врачей</h2>
+        <a href="/patient" class="btn btn-secondary">Назад в кабинет</a>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">Поиск свободных мест для записи</div>
+        <div class="card-body">
+            <form method="get" class="row g-2">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="doctorName" placeholder="Врач" th:value="${doctorName}" />
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="specialization" placeholder="Специальность" th:value="${specialization}" />
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="date" th:value="${date}" />
+                </div>
+                <div class="col-md-2">
+                    <input type="time" class="form-control" name="time" th:value="${time}" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Найти</button>
+                </div>
+                <div class="col-12 mt-1">
+                    <a href="/patient/schedule" class="btn btn-secondary btn-sm" style="margin-top: 7px">Сбросить фильтр</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{/patient/schedule(sort='doctor', order=${sort == 'doctor' and order == 'asc' ? 'desc' : 'asc'})}">
+                    Врач
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/patient/schedule(sort='specialization', order=${sort == 'specialization' and order == 'asc' ? 'desc' : 'asc'})}">
+                    Специальность
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/patient/schedule(sort='date', order=${sort == 'date' and order == 'asc' ? 'desc' : 'asc'})}">
+                    Дата
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/patient/schedule(sort='time', order=${sort == 'time' and order == 'asc' ? 'desc' : 'asc'})}">
+                    Время
+                </a>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(schedules)}">
+            <td colspan="4" class="text-center">Нет доступных записей</td>
+        </tr>
+        <tr th:each="s : ${schedules}">
+            <td th:text="${s.doctor?.user?.fullName ?: '–'}"></td>
+            <td th:text="${s.doctor?.specialization ?: '–'}"></td>
+            <td th:text="${s.date}"></td>
+            <td th:text="${s.time}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

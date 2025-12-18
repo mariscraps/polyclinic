@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Личный кабинет пациента')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+  <div th:if="${passwordChanged}" class="alert alert-success alert-dismissible fade show" role="alert">
+    Ваш пароль успешно сменен!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+  <h2 class="mb-4">Личный кабинет пациента</h2>
+
+  <div class="text-center mb-5">
+    <a href="/patient/appointments/book" class="btn btn-primary btn-lg px-5 py-3 shadow-sm" style="margin-left: -955px; margin-top: 20px">
+      <i class="bi bi-calendar-plus me-2"></i>Записаться на прием
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-5">
+      <div class="card shadow-sm h-100">
+        <div class="card-header blue-element text-white">
+          <h5 class="mb-0">Мой профиль</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled mb-3">
+            <li class="mb-2"><strong>ФИО:</strong> <span th:text="${user.fullName} ?: '—'"></span></li>
+            <li class="mb-2"><strong>Email:</strong> <span th:text="${user.email} ?: '—'"></span></li>
+            <li class="mb-2"><strong>Телефон:</strong> <span th:text="${patient.phone ?: 'не указан'}"></span></li>
+          </ul>
+          <a href="/patient/profile" class="btn btn-outline-primary w-100">
+            Мои личные данные
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="card shadow-sm h-100">
+        <div class="card-header text-white green-element">
+          <h5 class="mb-0">Быстрый доступ</h5>
+        </div>
+        <div class="card-body d-flex flex-column justify-content-center">
+          <div class="row g-2">
+            <div class="col-6">
+              <a href="/patient/schedule" class="btn btn-outline-light-bluee w-100">Расписание врачей</a>
+            </div>
+            <div class="col-6">
+              <a href="/patient/appointments" class="btn btn-outline-dark-blue w-100">Мои записи</a>
+            </div>
+            <div class="col-6">
+              <a href="/patient/referrals" class="btn btn-outline-yelloww w-100">Направления</a>
+            </div>
+            <div class="col-6">
+              <a href="/patient/records" class="btn btn-outline-sky-blue w-100">Заключения врачей</a>
+            </div>
+            <div class="col-6">
+              <a href="/patient/results" class="btn btn-outline-grey w-100">Анализы и обследования</a>
+            </div>
+            <div class="col-6">
+              <a href="/patient/history" class="btn btn-outline-purple w-100">История приемов</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Мои записи</h4>
+      <a href="/patient/appointments" class="text-primary">Показать все 🠖</a>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Врач</th>
+          <th>Специальность</th>
+          <th>Дата</th>
+          <th>Время</th>
+          <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(appointments)}">
+          <td colspan="5" class="text-center">Нет активных записей</td>
+        </tr>
+        <tr th:each="a, iterStat : ${appointments}" th:if="${appointments != null and iterStat.index < 3}">
+          <td th:text="${a.doctor?.user?.fullName ?: '–'}"></td>
+          <td th:text="${a.doctor?.specialization ?: '–'}"></td>
+          <td th:text="${a.schedule?.date ?: '–'}"></td>
+          <td th:text="${a.schedule?.time ?: '–'}"></td>
+          <td>
+            <form th:action="@{/patient/appointments/cancel}" method="post" style="display:inline;">
+              <input type="hidden" name="id" th:value="${a.id}" />
+              <button type="submit" class="btn btn-sm btn-outline-danger"
+                      onclick="return confirm('Отменить запись к врачу?')">
+                Отменить
+              </button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Мои направления</h4>
+      <a href="/patient/referrals" class="text-primary">Показать все 🠖</a>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <ul class="nav nav-tabs" id="referralTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="analyses-tab" data-bs-toggle="tab" data-bs-target="#analyses">Анализы</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="studies-tab" data-bs-toggle="tab" data-bs-target="#studies">Обследования</button>
+          </li>
+        </ul>
+        <div class="tab-content mt-3">
+          <!-- Анализы -->
+          <div class="tab-pane fade show active" id="analyses">
+            <table class="table table-sm">
+              <thead>
+              <tr>
+                <th>Тип анализа</th>
+                <th>Кабинет</th>
+                <th>Дата</th>
+                <th>Время</th>
+                <th>Врач</th>
+                <th>Специальность</th>
+                <th>Статус</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:if="${#lists.isEmpty(analyses)}">
+                <td colspan="7" class="text-center">Нет направлений на анализы</td>
+              </tr>
+              <tr th:each="r : ${analyses}">
+                <td th:text="${r.testType}"></td>
+                <td th:text="${r.office ?: '—'}"></td>
+                <td th:text="${r.date}"></td>
+                <td th:text="${r.time ?: '—'}"></td>
+                <td th:text="${r.doctor?.user?.fullName ?: '—'}"></td>
+                <td th:text="${r.doctor?.specialization ?: '—'}"></td>
+                <td>Ожидает выполнения</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tab-pane fade" id="studies">
+            <table class="table table-sm">
+              <thead>
+              <tr>
+                <th>Тип обследования</th>
+                <th>Кабинет</th>
+                <th>Дата</th>
+                <th>Время</th>
+                <th>Врач</th>
+                <th>Специальность</th>
+                <th>Статус</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:if="${#lists.isEmpty(studies)}">
+                <td colspan="7" class="text-center">Нет направлений на обследования</td>
+              </tr>
+              <tr th:each="r : ${studies}">
+                <td th:text="${r.testType}"></td>
+                <td th:text="${r.office ?: '—'}"></td>
+                <td th:text="${r.date}"></td>
+                <td th:text="${r.time ?: '—'}"></td>
+                <td th:text="${r.doctor?.user?.fullName ?: '—'}"></td>
+                <td th:text="${r.doctor?.specialization ?: '—'}"></td>
+                <td>Ожидает выполнения</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

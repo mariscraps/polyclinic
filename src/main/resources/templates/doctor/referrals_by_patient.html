@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Направления пациента')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+    <h2>Направления пациента: <span th:text="${patient.user?.fullName}"></span></h2>
+
+    <ul class="nav nav-tabs mt-3" id="referralTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="analyses-tab" data-bs-toggle="tab" data-bs-target="#analyses" type="button">Анализы</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="studies-tab" data-bs-toggle="tab" data-bs-target="#studies" type="button">Обследование</button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="referralTabContent">
+
+        <div class="tab-pane fade show active" id="analyses" role="tabpanel">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Тип анализа</th>
+                    <th>Кабинет</th>
+                    <th>Дата</th>
+                    <th>Время</th>
+                    <th>Врач</th>
+                    <th>Специальность</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(analyses)}">
+                    <td colspan="7" class="text-center">Нет направлений на анализы</td>
+                </tr>
+                <tr th:each="r : ${analyses}">
+                    <td th:text="${r.testType}"></td>
+                    <td th:text="${r.office}"></td>
+                    <td th:text="${r.date}"></td>
+                    <td th:text="${r.time}"></td>
+                    <td th:text="${r.doctor?.user?.fullName ?: '—'}"></td>
+                    <td th:text="${r.doctor?.specialization ?: '—'}"></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a th:if="${#lists.contains(ownActiveReferralIds, r.id)}"
+                               th:href="@{/doctor/referral/{id}/complete(id=${r.id})}"
+                               class="btn btn-success btn-sm">Заполнить</a>
+
+                            <form th:if="${r.doctor?.id == currentDoctorId}"
+                                  th:action="@{/doctor/referral/delete/{id}(id=${r.id})}"
+                                  method="post">
+                                <input type="hidden" name="patientId" th:value="${patient.id}" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Удалить направление на анализ?')">
+                                    Удалить
+                                </button>
+                            </form>
+
+                            <span th:unless="${r.doctor?.id == currentDoctorId}" class="text-muted">—</span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="studies" role="tabpanel">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Тип обследования</th>
+                    <th>Кабинет</th>
+                    <th>Дата</th>
+                    <th>Время</th>
+                    <th>Врач</th>
+                    <th>Специальность</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(studies)}">
+                    <td colspan="7" class="text-center">Нет направлений на обследование</td>
+                </tr>
+                <tr th:each="r : ${studies}">
+                    <td th:text="${r.testType}"></td>
+                    <td th:text="${r.office}"></td>
+                    <td th:text="${r.date}"></td>
+                    <td th:text="${r.time}"></td>
+                    <td th:text="${r.doctor?.user?.fullName ?: '—'}"></td>
+                    <td th:text="${r.doctor?.specialization ?: '—'}"></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a th:if="${#lists.contains(ownActiveReferralIds, r.id)}"
+                               th:href="@{/doctor/referral/{id}/complete(id=${r.id})}"
+                               class="btn btn-success btn-sm">Заполнить</a>
+
+                            <form th:if="${r.doctor?.id == currentDoctorId}"
+                                  th:action="@{/doctor/referral/delete/{id}(id=${r.id})}"
+                                  method="post">
+                                <input type="hidden" name="patientId" th:value="${patient.id}" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Удалить направление на обследование?')">
+                                    Удалить
+                                </button>
+                            </form>
+
+                            <span th:unless="${r.doctor?.id == currentDoctorId}" class="text-muted">—</span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a th:href="@{/doctor/patient/{id}/history(id=${patient.id})}"
+           class="btn btn-secondary">Назад к мед. карте</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

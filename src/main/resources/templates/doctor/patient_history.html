@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Мед. карта пациента')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+  <h2>Мед. карта пациента: <span th:text="${patient.user?.fullName}"></span></h2>
+
+  <ul class="nav nav-tabs mt-3" id="historyTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#records">Медицинские заключения</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#labs">Результаты анализов</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#studies">Результаты обследований</button>
+    </li>
+  </ul>
+
+  <div class="tab-content mt-3" id="historyTabContent">
+
+    <div class="tab-pane fade show active" id="records" role="tabpanel">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Врач</th>
+          <th>Специальность</th>
+          <th>Жалобы</th>
+          <th>Осмотр</th>
+          <th>Диагноз</th>
+          <th>Рекомендации</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(records)}">
+          <td colspan="7" class="text-center">Нет медицинских заключений</td>
+        </tr>
+        <tr th:each="r : ${records}">
+          <td th:text="${#temporals.format(r.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+          <td th:text="${r.doctor?.user?.fullName ?: '—'}"></td>
+          <td th:text="${r.doctor?.specialization ?: '—'}"></td>
+          <td th:text="${r.complaints ?: '—'}"></td>
+          <td th:text="${r.examination ?: '—'}"></td>
+          <td th:text="${r.diagnosis ?: '—'}"></td>
+          <td th:text="${r.recommendations ?: '—'}"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-pane fade" id="labs" role="tabpanel">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Тип анализа</th>
+          <th>Дата</th>
+          <th>Время</th>
+          <th>Врач</th>
+          <th>Специальность</th>
+          <th>Кабинет</th>
+          <th>Результат</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(labs)}">
+          <td colspan="7" class="text-center">Нет результатов анализов</td>
+        </tr>
+        <tr th:each="l : ${labs}">
+          <td th:text="${l.testType}"></td>
+          <td th:text="${l.date}"></td>
+          <td th:text="${l.time ?: '—'}"></td>
+          <td th:text="${l.doctor?.user?.fullName ?: '—'}"></td>
+          <td th:text="${l.doctor?.specialization ?: '—'}"></td>
+          <td th:text="${l.office ?: '—'}"></td>
+          <td th:text="${l.result ?: '—'}"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-pane fade" id="studies" role="tabpanel">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Тип обследования</th>
+          <th>Дата</th>
+          <th>Время</th>
+          <th>Врач</th>
+          <th>Специальность</th>
+          <th>Кабинет</th>
+          <th>Результат</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(studies)}">
+          <td colspan="7" class="text-center">Нет результатов обследований</td>
+        </tr>
+        <tr th:each="s : ${studies}">
+          <td th:text="${s.testType}"></td>
+          <td th:text="${s.date}"></td>
+          <td th:text="${s.time ?: '—'}"></td>
+          <td th:text="${s.doctor?.user?.fullName ?: '—'}"></td>
+          <td th:text="${s.doctor?.specialization ?: '—'}"></td>
+          <td th:text="${s.office ?: '—'}"></td>
+          <td th:text="${s.result ?: '—'}"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <a href="/doctor/appointments" class="btn btn-secondary">Назад к записям</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

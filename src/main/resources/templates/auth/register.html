@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Регистрация')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-5" style="max-width: 600px;">
+  <h2 class="text-center mb-4">Регистрация</h2>
+  <form th:object="${registrationDto}" th:action="@{/register}" method="post">
+    <div class="mb-3">
+      <label class="form-label">ФИО</label>
+      <input type="text" class="form-control" th:field="*{fullName}" required/>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" th:field="*{email}" required/>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Пароль</label>
+      <div class="input-group">
+        <input type="password" class="form-control" id="password" name="password" required minlength="6" />
+        <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+      <i class="bi bi-eye-fill"></i>
+    </span>
+      </div>
+    </div>
+    <div class="mb-3" sec:authorize="hasRole('ADMIN')">
+      <label class="form-label">Роль</label>
+      <select class="form-select" th:field="*{role}">
+        <option th:each="r : ${T(fa.ru.polyclinic.model.Role).values()}"
+                th:value="${r}" th:text="${r}"></option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success w-100">Зарегистрироваться</button>
+  </form>
+  <div class="text-center mt-3">
+    <a href="/login">Уже есть аккаунт?</a>
+  </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<script>
+  const togglePassword = document.querySelector('#togglePassword');
+  const password = document.querySelector('#password');
+
+  if (togglePassword && password) {
+    togglePassword.addEventListener('click', function () {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.innerHTML = type === 'password'
+              ? '<i class="bi bi-eye-fill"></i>'
+              : '<i class="bi bi-eye-slash-fill"></i>';
+    });
+  }
+</script>
+</body>
+</html>

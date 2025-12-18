@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Результат анализа')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+    <h2>Заполнить результат анализа</h2>
+    <p>Пациент: <span th:text="${lab.patient.user?.fullName}"></span></p>
+    <p>Тип анализа: <span th:text="${lab.testType}"></span></p>
+
+    <form th:object="${lab}" th:action="@{/doctor/lab/result/update}" method="post" class="mt-3">
+        <input type="hidden" th:field="*{id}" />
+        <input type="hidden" th:field="*{patient}" />
+        <input type="hidden" th:field="*{doctor}" />
+        <input type="hidden" th:field="*{testType}" />
+        <input type="hidden" th:field="*{date}" />
+
+        <div class="mb-3">
+            <label class="form-label">Результат *</label>
+            <textarea class="form-control" th:field="*{result}" rows="5" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">Сохранить результат</button>
+        <a th:href="@{/doctor/patient/{id}/history(id=${lab.patient.id})}"
+           class="btn btn-secondary ms-2">Отмена</a>
+    </form>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Назначить обследование')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+    <h2>Назначить обследование пациенту</h2>
+    <p th:text="'Пациент: ' + ${patient.user?.fullName}"></p>
+
+    <form th:object="${study}" th:action="@{/doctor/study/add}" method="post" class="mt-3">
+        <input type="hidden" th:field="*{patientId}" />
+        <input type="hidden" th:field="*{doctorId}" />
+
+        <div class="mb-3">
+            <label class="form-label">Тип обследования *</label>
+            <input type="text" class="form-control" th:field="*{testType}" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Дата *</label>
+            <input type="date" class="form-control" th:field="*{date}" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Назначить</button>
+        <a href="/doctor/appointments" class="btn btn-secondary ms-2">Отмена</a>
+    </form>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

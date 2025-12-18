@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Заполнить результат')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-4">
+  <h2>Заполнить результат</h2>
+  <p>
+    <strong>Тип:</strong> <span th:text="${referral.type == 'ANALYSIS' ? 'Анализ' : 'Обследование'}"></span><br>
+    <strong>Пациент:</strong> <span th:text="${referral.patient.user.fullName}"></span><br>
+    <strong>Назначение:</strong> <span th:text="${referral.testType}"></span>
+  </p>
+
+  <form th:action="@{/doctor/referral/complete}" method="post">
+    <input type="hidden" name="referralId" th:value="${referral.id}" />
+    <div class="mb-3">
+      <label class="form-label">Результат *</label>
+      <textarea name="result" class="form-control" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Сохранить</button>
+    <a th:href="@{/doctor/appointments}" class="btn btn-secondary ms-2">Отмена</a>
+  </form>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

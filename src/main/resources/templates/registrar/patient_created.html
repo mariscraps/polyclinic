@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Пациент создан')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="alert alert-success">
+        <h4>Пациент успешно создан!</h4>
+        <p><strong>Email:</strong> <span th:text="${generatedEmail}"></span></p>
+        <p><strong>Временный пароль:</strong> <span th:text="${generatedPassword}"></span></p>
+        <p class="text-warning">Сообщите пароль пациенту. При первом входе система потребует его сменить.</p>
+    </div>
+    <a href="/registrar/patients" class="btn btn-primary">Вернуться к списку пациентов</a>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

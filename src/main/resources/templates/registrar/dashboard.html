@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Регистратура')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-primary text-white blue-element">
+          <h5 class="mb-0">Мой профиль</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2"><strong>ФИО:</strong> <span th:text="${user.fullName} ?: '—'"></span></li>
+            <li class="mb-2"><strong>Email:</strong> <span th:text="${user.email} ?: '—'"></span></li>
+            <li class="mb-2"><strong>Должность:</strong> Сотрудник регистратуры</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header text-white green-element">
+          <h5 class="mb-0">Быстрый доступ</h5>
+        </div>
+        <div class="card-body d-flex flex-column justify-content-center">
+          <div class="d-grid gap-2">
+            <a href="/registrar/patients" class="btn btn-outline-primary">Пациенты</a>
+            <a href="/registrar/doctors" class="btn btn-outline-green">Врачи</a>
+            <a href="/registrar/schedule" class="btn btn-outline-light-blue">Расписание врачей</a>
+            <a href="/registrar/appointments" class="btn btn-outline-primary">Записи на прием</a>
+            <a href="/registrar/statistics" class="btn btn-outline-purplee">Статистика</a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

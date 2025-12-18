@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Обследования')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-4">
+    <h2>Результаты обследований</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr><th>Дата</th><th>Тип обследования</th><th>Результат</th></tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(studies)}">
+            <td colspan="3" class="text-center">Нет обследований</td>
+        </tr>
+        <tr th:each="s : ${studies}">
+            <td th:text="${s.date}"></td>
+            <td th:text="${s.testType}"></td>
+            <td th:text="${s.result ?: '—'}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/patient" class="btn btn-secondary">Назад в кабинет</a>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

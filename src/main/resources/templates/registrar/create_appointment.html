@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Запись пациента на прием')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+    <h2>Записать пациента на прием</h2>
+
+    <form th:object="${appointment}" th:action="@{/registrar/appointments/book}" method="post" class="mt-3">
+        <div class="mb-3">
+            <label class="form-label">Пациент *</label>
+            <select class="form-select" th:field="*{patientId}" required>
+                <option value="">Выберите пациента</option>
+                <option th:each="p : ${patients}"
+                        th:value="${p.id}"
+                        th:text="${p.user?.fullName + ' (' + (p.phone ?: 'без телефона') + ')'}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Врач *</label>
+            <select class="form-select" id="doctorSelect" required>
+                <option value="">Выберите врача</option>
+                <option th:each="d : ${doctors}"
+                        th:value="${d.id}"
+                        th:text="${d.user?.fullName + ' (' + d.specialization + ')'}">
+                </option>
+            </select>
+            <input type="hidden" id="doctorIdField" name="doctorId" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Временной слот *</label>
+            <select class="form-select" id="slotSelect" name="scheduleId" required>
+                <option value="">Выберите дату и время</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Записать</button>
+        <a href="/registrar/appointments" class="btn btn-secondary ms-2">Отмена</a>
+    </form>
+</div>
+
+<script>
+    document.getElementById('doctorSelect').addEventListener('change', function () {
+        const doctorId = this.value;
+        const slotSelect = document.getElementById('slotSelect');
+        const doctorIdField = document.getElementById('doctorIdField');
+
+        doctorIdField.value = doctorId;
+        slotSelect.innerHTML = '<option value="">Выберите дату и время</option>';
+
+        if (!doctorId) return;
+
+        fetch(`/registrar/appointments/slots?doctorId=${doctorId}`)
+            .then(response => response.json())
+            .then(slots => {
+                slots.forEach(slot => {
+                    const option = document.createElement('option');
+                    option.value = slot.id;
+                    const dateStr = new Date(slot.date).toLocaleDateString('ru-RU');
+                    const timeStr = slot.time.substring(0, 5);
+                    option.textContent = `${dateStr} ${timeStr} — ${slot.doctor.fullName} (${slot.doctor.specialization})`;
+                    slotSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error('Ошибка загрузки слотов:', err);
+                slotSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
+            });
+    });
+</script>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

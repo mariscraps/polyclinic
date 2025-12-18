@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Создать направление')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+  <h2 th:text="${type == 'ANALYSIS' ? 'Направление на анализ' : 'Направление на обследование'}"></h2>
+  <p>Пациент: <span th:text="${patient.user?.fullName}"></span></p>
+
+  <form th:object="${referral}" th:action="@{/doctor/referral/create}" method="post" class="mt-3">
+    <input type="hidden" name="patientId" th:value="${patientId}" />
+    <input type="hidden" name="type" th:value="${type}" />
+
+    <div class="mb-3">
+      <label class="form-label">Тип анализа / обследования *</label>
+      <input type="text" class="form-control" th:field="*{testType}" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Кабинет *</label>
+      <input type="text" class="form-control" th:field="*{office}" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Дата *</label>
+      <input type="date" class="form-control" th:field="*{date}" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Время *</label>
+      <input type="time" class="form-control" th:field="*{time}" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать направление</button>
+    <a th:href="@{/doctor/appointments}"
+       class="btn btn-secondary ms-2">Отмена</a>
+  </form>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

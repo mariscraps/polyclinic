@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('База пациентов')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>База пациентов</h2>
+        <a href="/registrar/patients/add" class="btn btn-success">Добавить пациента в систему</a>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">Поиск пациентов</div>
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-2">
+                    <div class="col-md-1">
+                        <input type="number" class="form-control" name="id" placeholder="ID" th:value="${searchId}" min="1" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" name="fullName" placeholder="ФИО" th:value="${searchFullName}" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" name="birthDate" th:value="${searchBirthDate}" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" name="passport" placeholder="Паспорт" th:value="${searchPassport}" />
+                    </div>
+                    <div class="col-md-1"> <!-- Полис: уменьшено -->
+                        <input type="text" class="form-control" name="insurancePolicy" placeholder="Полис" th:value="${searchInsurancePolicy}" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" name="phone" placeholder="Телефон" th:value="${searchPhone}" />
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Найти</button>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <a href="/registrar/patients" class="btn btn-secondary btn-sm" style="margin-top: 7px">Сбросить фильтр</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{/registrar/patients(sort='id', order=${order == 'asc' ? 'desc' : 'asc'})}">
+                    ID <span th:if="${sort == 'id'}" th:class="${order == 'asc' ? '↑' : '↓'}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/registrar/patients(sort='fullName', order=${order == 'asc' ? 'desc' : 'asc'})}">
+                    ФИО <span th:if="${sort == 'fullName'}" th:class="${order == 'asc' ? '↑' : '↓'}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/registrar/patients(sort='birthDate', order=${order == 'asc' ? 'desc' : 'asc'})}">
+                    Дата рождения <span th:if="${sort == 'birthDate'}" th:class="${order == 'asc' ? '↑' : '↓'}"></span>
+                </a>
+            </th>
+            <th>Паспорт</th>
+            <th>Полис</th>
+            <th>Email</th>
+            <th>Телефон</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(patients)}">
+            <td colspan="8" class="text-center">Пациенты не найдены</td>
+        </tr>
+        <tr th:each="p : ${patients}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.user?.fullName ?: '–'}"></td>
+            <td th:text="${p.birthDate ?: '–'}"></td>
+            <td th:text="${p.passport ?: '–'}"></td>
+            <td th:text="${p.insurancePolicy ?: '–'}"></td>
+            <td th:text="${p.user?.email ?: '–'}"></td>
+            <td th:text="${p.phone ?: '–'}"></td>
+            <td>
+                <a th:href="@{/registrar/patients/edit/{id}(id=${p.id})}"
+                   class="btn btn-sm btn-outline-primary">Редактировать</a>
+                <a th:href="@{/registrar/patients/delete/{id}(id=${p.id})}"
+                   class="btn btn-sm btn-outline-danger ms-1" style="margin-top: 7px"
+                   onclick="return confirm('Удалить пациента? Все данные будут потеряны!')">
+                    Удалить
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/registrar" class="btn btn-secondary">Назад</a>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

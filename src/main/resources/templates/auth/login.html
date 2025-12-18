@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Вход')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-5" style="max-width: 500px;">
+    <h2 class="text-center mb-4">Вход в систему</h2>
+    <div th:if="${param.logout}" class="alert alert-success">
+        Вы успешно вышли из системы.
+    </div>
+
+    <div th:if="${param.registered}" class="alert alert-success">
+        Регистрация прошла успешно! Войдите, пожалуйста.
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-danger">
+        Неверный email или пароль.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label">Email</label>
+            <input type="email" class="form-control" id="username" name="username" required/>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Пароль</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="password" name="password" required />
+                <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+      <i class="bi bi-eye-fill"></i>
+    </span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Войти</button>
+    </form>
+
+    <div class="text-center mt-3">
+        <a href="/register">Регистрация нового пользователя</a>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+
+    if (togglePassword && password) {
+        togglePassword.addEventListener('click', function () {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.innerHTML = type === 'password'
+                ? '<i class="bi bi-eye-fill"></i>'
+                : '<i class="bi bi-eye-slash-fill"></i>';
+        });
+    }
+</script>
+</body>
+</html>

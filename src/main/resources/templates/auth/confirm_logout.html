@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Подтверждение выхода')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card">
+        <div class="card-body text-center">
+            <h4>Вы уже вошли в систему как:</h4>
+            <p class="fs-5 text-primary" th:text="${currentUser}"></p>
+            <p class="mt-3">Хотите выйти?</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Выйти</button>
+                </form>
+                <a href="/dashboard" class="btn btn-success ms-md-2">Остаться</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

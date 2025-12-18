@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Добавить врача')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+  <h2>Добавить врача</h2>
+  <form th:object="${doctor}" th:action="@{/registrar/doctors/add}" method="post">
+    <div class="mb-3">
+      <label class="form-label">Пользователь *</label>
+      <select class="form-select" th:field="*{user.id}" required>
+        <option value="">Выберите пользователя</option>
+        <option th:each="u : ${users}"
+                th:value="${u.id}"
+                th:text="${u.email + ' (' + u.fullName + ')'}">
+        </option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Специальность *</label>
+      <input type="text" class="form-control" th:field="*{specialization}" required/>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Кабинет</label>
+      <input type="text" class="form-control" th:field="*{office}"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="/registrar/doctors" class="btn btn-secondary ms-2">Отмена</a>
+  </form>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

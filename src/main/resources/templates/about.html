@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Об авторе')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-5">
+    <h2>Об авторе</h2>
+    <p><strong>ФИО:</strong> Алюшина Мария Дмитриевна </p>
+    <p><strong>Группа:</strong> ИД23-1 </p>
+    <p><strong>Учебное заведение:</strong> Финансовый университет при Правительстве РФ</p>
+    <p><strong>Контакты:</strong> 233472@edu.fa.ru</p>
+    <p><strong>Опыт:</strong> Разработка веб-приложений на Java, Spring Boot, Thymeleaf, Hibernate, PostgreSQL.</p>
+    <p><strong>Период разработки:</strong> Сентябрь - Декабрь 2025 г.</p>
+    <a href="javascript:history.back()" class="btn btn-secondary"> Назад </a>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

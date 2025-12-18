@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Направления')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-4">
+  <h2>Мои направления</h2>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Тип</th>
+      <th>Пациент</th>
+      <th>Кабинет</th>
+      <th>Дата</th>
+      <th>Время</th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${#lists.isEmpty(referrals)}">
+      <td colspan="6" class="text-center">Нет активных направлений</td>
+    </tr>
+    <tr th:each="r : ${referrals}">
+      <td th:text="${r.type == 'ANALYSIS' ? 'Анализ' : 'Обследование'}"></td>
+      <td th:text="${r.patient.user.fullName}"></td>
+      <td th:text="${r.office}"></td>
+      <td th:text="${r.date}"></td>
+      <td th:text="${r.time}"></td>
+      <td>
+        <a th:href="@{/doctor/referral/{id}/complete(id=${r.id})}"
+           class="btn btn-sm btn-success">Заполнить</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="/doctor" class="btn btn-secondary">Назад в кабинет</a>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

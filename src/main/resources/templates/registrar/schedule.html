@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Расписание врачей')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Расписание врачей</h2>
+        <a href="/registrar" class="btn btn-secondary">Назад</a>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">Добавить свободную запись</div>
+        <div class="card-body">
+            <form th:object="${scheduleDto}" th:action="@{/registrar/schedule/create}" method="post" class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">Врач *</label>
+                    <select class="form-select" th:field="*{doctorId}" required>
+                        <option value="">Выберите врача</option>
+                        <option th:each="d : ${doctors}"
+                                th:value="${d.id}"
+                                th:text="${d.user?.fullName + ' (' + d.specialization + ')'}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Дата *</label>
+                    <input type="date" class="form-control" th:field="*{date}" required/>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Время *</label>
+                    <input type="time" class="form-control" th:field="*{time}" required/>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">Поиск записей в расписании врачей</div>
+        <div class="card-body">
+            <form method="get" class="row g-2">
+                <div class="col-md-1">
+                    <input type="number" class="form-control" name="id" placeholder="ID" th:value="${searchId}" min="1" />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="doctorName" placeholder="Врач" th:value="${searchDoctorName}" />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="specialization" placeholder="Специализация" th:value="${searchSpecialization}" />
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="date" th:value="${searchDate}" />
+                </div>
+                <div class="col-md-2">
+                    <input type="time" class="form-control" name="time" th:value="${searchTime}" />
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" name="patientId" placeholder="ID пациента" th:value="${searchPatientId}" min="1" />
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Найти</button>
+                </div>
+                <div class="col-12 mt-1">
+                    <a href="/registrar/schedule" class="btn btn-secondary btn-sm" style="margin-top: 7px">Сбросить фильтр</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{/registrar/schedule(sort='id', order=${sort == 'id' and order == 'asc' ? 'desc' : 'asc'})}">ID</a>
+            </th>
+            <th>
+                <a th:href="@{/registrar/schedule(sort='doctor', order=${sort == 'doctor' and order == 'asc' ? 'desc' : 'asc'})}">Врач</a>
+            </th>
+            <th>
+                <a th:href="@{/registrar/schedule(sort='specialization', order=${sort == 'specialization' and order == 'asc' ? 'desc' : 'asc'})}">Специализация</a>
+            </th>
+            <th>
+                <a th:href="@{/registrar/schedule(sort='date', order=${sort == 'date' and order == 'asc' ? 'desc' : 'asc'})}">Дата</a>
+            </th>
+            <th>
+                <a th:href="@{/registrar/schedule(sort='time', order=${sort == 'time' and order == 'asc' ? 'desc' : 'asc'})}">Время</a>
+            </th>
+            <th>
+                <a th:href="@{/registrar/schedule(sort='status', order=${sort == 'status' and order == 'asc' ? 'desc' : 'asc'})}">Статус</a>
+            </th>
+            <th>
+                <a th:href="@{/registrar/schedule(sort='patientId', order=${sort == 'patientId' and order == 'asc' ? 'desc' : 'asc'})}">ID пациента</a>
+            </th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(schedules)}">
+            <td colspan="8" class="text-center">Слоты не заданы</td>
+        </tr>
+        <tr th:each="s : ${schedules}">
+            <td th:text="${s.id}"></td>
+            <td th:text="${s.doctor?.user?.fullName ?: '–'}"></td>
+            <td th:text="${s.doctor?.specialization ?: '–'}"></td>
+            <td th:text="${s.date}"></td>
+            <td th:text="${s.time}"></td>
+            <td>
+                <span th:if="${s.available}" class="text-success" style="font-weight: bold">Свободен</span>
+                <span th:unless="${s.available}" class="text-pink" style="font-weight: bold">Занят</span>
+            </td>
+            <td th:text="${s.available ? '–' : (s.appointment != null ? s.appointment.patient.id : '–')}"></td>
+            <td>
+                <a th:href="@{/registrar/schedule/edit/{id}(id=${s.id})}"
+                   class="btn btn-sm btn-outline-primary">Редактировать</a>
+                <a th:href="@{/registrar/schedule/delete/{id}(id=${s.id})}"
+                   class="btn btn-sm btn-outline-danger ms-1"
+                   onclick="return confirm('Удалить слот?')">Удалить</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .text-purple { color: #6f42c1 !important; }
+</style>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Заключения врачей')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Заключения врачей</h2>
+        <a href="/patient" class="btn btn-secondary">Назад в кабинет</a>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">Поиск заключений</div>
+        <div class="card-body">
+            <form method="get" class="row g-2">
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="date" th:value="${searchDate}" />
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="doctor" placeholder="Врач" th:value="${searchDoctor}" />
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="specialization" placeholder="Специальность" th:value="${searchSpecialization}" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Найти</button>
+                </div>
+                <div class="col-12 mt-1">
+                    <a href="/patient/records" class="btn btn-secondary btn-sm" style="margin-top: 7px">Сбросить фильтр</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{/patient/records(sort='date', order=${sort == 'date' and order == 'asc' ? 'desc' : 'asc'})}">
+                    Дата
+                </a>
+            </th>
+            <th>Жалобы пациента</th>
+            <th>Общий осмотр</th>
+            <th>Основной диагноз</th>
+            <th>Рекомендации</th>
+            <th>
+                <a th:href="@{/patient/records(sort='doctor', order=${sort == 'doctor' and order == 'asc' ? 'desc' : 'asc'})}">
+                    Врач
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/patient/records(sort='specialization', order=${sort == 'specialization' and order == 'asc' ? 'desc' : 'asc'})}">
+                    Специальность
+                </a>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(records)}">
+            <td colspan="7" class="text-center">Нет заключений</td>
+        </tr>
+        <tr th:each="r : ${records}">
+            <td th:text="${#temporals.format(r.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+            <td th:text="${r.complaints ?: '–'}"></td>
+            <td th:text="${r.examination ?: '–'}"></td>
+            <td th:text="${r.diagnosis ?: '–'}"></td>
+            <td th:text="${r.recommendations ?: '–'}"></td>
+            <td th:text="${r.doctor?.user?.fullName ?: '–'}"></td>
+            <td th:text="${r.doctor?.specialization ?: '–'}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

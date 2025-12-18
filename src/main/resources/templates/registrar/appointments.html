@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Все записи на приём')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Все записи на прием</h2>
+    <a href="/registrar/appointments/create" class="btn btn-success" style="margin-left: 600px">Записать пациента на прием</a>
+    <a href="/registrar" class="btn btn-secondary">Назад</a>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">Поиск записей</div>
+    <div class="card-body">
+      <form method="get" class="row g-2">
+        <div class="col-md-2">
+          <input type="number" class="form-control" name="patientId" placeholder="ID пациента" th:value="${searchPatientId}" min="1" />
+        </div>
+        <div class="col-md-2">
+          <input type="text" class="form-control" name="patientName" placeholder="ФИО пациента" th:value="${searchPatientName}" />
+        </div>
+        <div class="col-md-2">
+          <input type="text" class="form-control" name="phone" placeholder="Телефон" th:value="${searchPhone}" />
+        </div>
+        <div class="col-md-2">
+          <input type="date" class="form-control" name="date" th:value="${searchDate}" />
+        </div>
+        <div class="col-md-2">
+          <input type="time" class="form-control" name="time" th:value="${searchTime}" />
+        </div>
+        <div class="col-md-1 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100">Найти</button>
+        </div>
+        <div class="col-12 mt-1">
+          <a href="/registrar/appointments" class="btn btn-secondary btn-sm">Сбросить фильтр</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <table class="table table-striped mt-3">
+    <thead>
+    <tr>
+      <th>
+        <a th:href="@{/registrar/appointments(sort='id', order=${sort == 'id' and order == 'asc' ? 'desc' : 'asc'})}">ID пациента</a>
+      </th>
+      <th>
+        <a th:href="@{/registrar/appointments(sort='patient', order=${sort == 'patient' and order == 'asc' ? 'desc' : 'asc'})}">Пациент</a>
+      </th>
+      <th>
+        <a th:href="@{/registrar/appointments(sort='phone', order=${sort == 'phone' and order == 'asc' ? 'desc' : 'asc'})}">Телефон</a>
+      </th>
+      <th>
+        <a th:href="@{/registrar/appointments(sort='date', order=${sort == 'date' and order == 'asc' ? 'desc' : 'asc'})}">Дата</a>
+      </th>
+      <th>
+        <a th:href="@{/registrar/appointments(sort='time', order=${sort == 'time' and order == 'asc' ? 'desc' : 'asc'})}">Время</a>
+      </th>
+      <th>
+        <a th:href="@{/registrar/appointments(sort='doctor', order=${sort == 'doctor' and order == 'asc' ? 'desc' : 'asc'})}">
+          Врач
+        </a>
+      </th>
+      <th>
+        <a th:href="@{/registrar/appointments(sort='specialization', order=${sort == 'specialization' and order == 'asc' ? 'desc' : 'asc'})}">
+          Специальность
+        </a>
+      </th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${#lists.isEmpty(appointments)}">
+      <td colspan="8" class="text-center">Записей нет</td>
+    </tr>
+    <tr th:each="a : ${appointments}">
+      <td th:text="${a.patient.id}"></td>
+      <td th:text="${a.patient.user?.fullName ?: '–'}"></td>
+      <td th:text="${a.patient.phone ?: '–'}"></td>
+      <td th:text="${a.schedule?.date ?: '–'}"></td>
+      <td th:text="${a.schedule?.time ?: '–'}"></td>
+      <td th:text="${a.doctor?.user?.fullName ?: '–'}"></td>
+      <td th:text="${a.doctor?.specialization ?: '–'}"></td>
+      <td>
+        <a th:href="@{/registrar/appointments/delete/{id}(id=${a.id})}"
+           class="btn btn-sm btn-outline-danger"
+           onclick="return confirm('Удалить запись?')">
+          Удалить
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

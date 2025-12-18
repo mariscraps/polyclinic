@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Мои записи')}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: alert}"></div>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Мои записи на прием</h2>
+    <a href="/patient" class="btn btn-secondary">Назад в кабинет</a>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">Поиск записей</div>
+    <div class="card-body">
+      <form method="get" class="row g-2">
+        <div class="col-md-3">
+          <input type="text" class="form-control" name="doctorName" placeholder="Врач" th:value="${doctorName}" />
+        </div>
+        <div class="col-md-2">
+          <input type="text" class="form-control" name="specialization" placeholder="Специальность" th:value="${specialization}" />
+        </div>
+        <div class="col-md-2">
+          <input type="text" class="form-control" name="office" placeholder="Кабинет" th:value="${office}" />
+        </div>
+        <div class="col-md-2">
+          <input type="date" class="form-control" name="date" th:value="${date}" />
+        </div>
+        <div class="col-md-2">
+          <input type="time" class="form-control" name="time" th:value="${time}" />
+        </div>
+        <div class="col-md-1 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100" style="margin-bottom: 1px">Найти</button>
+        </div>
+        <div class="col-12 mt-1">
+          <a href="/patient/appointments" class="btn btn-secondary btn-sm" style="margin-top: 10px">Сбросить фильтр</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <table class="table table-striped mt-3">
+    <thead>
+    <tr>
+      <th>
+        <a th:href="@{/patient/appointments(sort='doctor', order=${sort == 'doctor' and order == 'asc' ? 'desc' : 'asc'})}">
+          Врач
+        </a>
+      </th>
+      <th>
+        <a th:href="@{/patient/appointments(sort='specialization', order=${sort == 'specialization' and order == 'asc' ? 'desc' : 'asc'})}">
+          Специальность
+        </a>
+      </th>
+      <th>
+        <a th:href="@{/patient/appointments(sort='office', order=${sort == 'office' and order == 'asc' ? 'desc' : 'asc'})}">
+          Кабинет
+        </a>
+      </th>
+      <th>
+        <a th:href="@{/patient/appointments(sort='date', order=${sort == 'date' and order == 'asc' ? 'desc' : 'asc'})}">
+          Дата
+        </a>
+      </th>
+      <th>
+        <a th:href="@{/patient/appointments(sort='time', order=${sort == 'time' and order == 'asc' ? 'desc' : 'asc'})}">
+          Время
+        </a>
+      </th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${#lists.isEmpty(appointments)}">
+      <td colspan="6" class="text-center">У вас нет записей</td>
+    </tr>
+    <tr th:each="a : ${appointments}">
+      <td th:text="${a.doctor?.user?.fullName ?: '–'}"></td>
+      <td th:text="${a.doctor?.specialization ?: '–'}"></td>
+      <td th:text="${a.doctor?.office ?: '–'}"></td>
+      <td th:text="${a.schedule?.date ?: '–'}"></td>
+      <td th:text="${a.schedule?.time ?: '–'}"></td>
+      <td>
+        <form th:action="@{/patient/appointments/cancel}" method="post" style="display:inline;">
+          <input type="hidden" name="id" th:value="${a.id}" />
+          <button type="submit" class="btn btn-sm btn-outline-danger"
+                  onclick="return confirm('Отменить запись к врачу?')">Отменить</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

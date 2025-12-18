@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Ошибка')}">
+    <style>
+        .error-card {
+            max-width: 600px;
+            margin: 4rem auto;
+            text-align: center;
+        }
+        .error-code {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+        .error-message {
+            font-size: 1.2rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container">
+    <div class="error-card">
+        <div class="error-code" th:text="${statusCode}">500</div>
+        <div class="error-message" th:text="${errorMessage}">
+            Произошла внутренняя ошибка сервера.
+        </div>
+        <p>Причина: <strong th:text="${errorReason}">Internal Server Error</strong></p>
+
+        <div class="mt-4">
+            <a href="javascript:history.back()" class="btn btn-outline-primary me-2">
+                Вернуться назад
+            </a>
+            <a href="/dashboard" class="btn btn-primary">Перейти в кабинет</a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>
