@@ -40,11 +40,13 @@ public class AppointmentServiceImpl implements AppointmentService {
         Schedule schedule = scheduleRepository.findById(dto.getScheduleId()).orElseThrow(() -> new RuntimeException("Schedule slot not found"));
 
         String newSpecialization = doctor.getSpecialization();
-        boolean alreadyHasAppointment = appointmentRepository.findByPatientId(dto.getPatientId()).stream()
+        List<Appointment> activeAppointments = appointmentRepository.findByPatientIdAndCompletedFalse(dto.getPatientId());
+        boolean alreadyHasActiveAppointment = activeAppointments.stream()
                 .anyMatch(a -> a.getDoctor().getSpecialization().equals(newSpecialization));
 
-        if (alreadyHasAppointment) {
-            throw new RuntimeException("Вы уже записаны к врачу специальности '" + newSpecialization + "'. Отмените существующую запись, чтобы записаться к другому врачу этой же специальности.");
+        if (alreadyHasActiveAppointment) {
+            throw new RuntimeException("Вы уже записаны к врачу специальности '" + newSpecialization +
+                    "'. Отмените существующую запись, чтобы записаться к другому врачу этой же специальности.");
         }
 
         if (!schedule.isAvailable()) {

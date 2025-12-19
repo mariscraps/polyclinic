@@ -101,7 +101,7 @@
         </thead>
         <tbody>
         <tr th:if="${#lists.isEmpty(schedules)}">
-            <td colspan="8" class="text-center">Слоты не заданы</td>
+            <td colspan="8" class="text-center">Записи не найдены</td>
         </tr>
         <tr th:each="s : ${schedules}">
             <td th:text="${s.id}"></td>
